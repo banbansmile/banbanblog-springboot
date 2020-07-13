@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.BlogUserDao">
+
+	<resultMap type="com.master.application.bean.BlogUser"
+		id="BlogUserMap">
+
+		<id column="id" property="id" />
+		<result column="user_code" property="userCode" />
+		<result column="user_name" property="userName" />
+		<result column="password" property="password" />
+		<result column="email" property="email" />
+		<result column="address" property="address" />
+		<result column="type" property="type" />
+		<result column="register_time" property="registerTime" />
+		<result column="image" property="image"/>
+	</resultMap>
+
+	<select id="getUserByCode" resultMap="BlogUserMap">
+		select * from blog_user	where user_code =#{userCode}
+	</select>
+
+	<insert id="addBlogUser" parameterType="com.master.application.bean.BlogUser">
+		insert into blog_user(user_code,user_name,password,email,address,image,type,register_time)values
+		(#{userCode},#{userName},#{password},#{email},#{address},#{image},#{type},now())
+	</insert>
+	
+	<update id="updateBlogUser" parameterType="com.master.application.bean.BlogUser">
+		update blog_user set user_code=#{userCode},user_name=#{userName},password=#{password},
+		email=#{email},address=#{address} where id=#{id}
+	</update>
+	
+	<update id="updatePassword_">
+		update blog_user set password=#{newPassword} where id=#{id}
+	</update>
+	
+	<delete id="deleteBlogUser">
+		delete blog_user where id=#{id}
+	</delete>
+	
+	<select id="getBlogUserByEmail" resultMap="BlogUserMap">
+		select * from blog_user where email=#{email}
+	</select>
+	
+	<update id="updateUserName">
+		update blog_user set user_name=#{username} where user_code=#{usercode}
+	</update>
+	
+	<update id="updatePassword">
+		update blog_user set password=#{newpassword} where user_code=#{usercode}
+	</update>
+
+	<update id="updateEmail">
+		update blog_user set email=#{email} where user_code=#{usercode}
+	</update>
+	
+	<update id="updateImage">
+		update blog_user set image=#{image} where user_code=#{usercode}
+	</update>
+	
+</mapper>
+

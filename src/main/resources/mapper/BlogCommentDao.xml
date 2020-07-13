@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.BlogCommentDao">
+
+	<resultMap type="com.master.application.bean.BlogComment"
+		id="BlogCommentMap">
+
+		<id column="id" property="id" />
+		<result column="comment" property="comment" />
+		<result column="title" property="title" />
+		<result column="add_time" property="addTime" />
+		<result column="like_count" property="likeCount" />
+		<result column="dislike_count" property="dislikeCount" />
+		<result column="user_id" property="userId" />
+		<result column="user_name" property="userName" />
+		<result column="address" property="address" />
+		<result column="image" property="image" />
+	</resultMap>
+	
+	<insert id="addBlogComment" parameterType="com.master.application.bean.BlogComment">
+		insert into blog_comment(user_id,comment,like_count,dislike_count,add_time)values(#{userId},#{comment},0,0,now())
+	</insert>
+	
+	<select id="getBlogCommentList" resultMap="BlogCommentMap">
+		select blog_comment.*,blog_user.user_name,blog_user.image,blog_user.address from blog_comment left join
+ 		blog_user on blog_comment.user_id=blog_user.id order by id desc
+	</select>
+	
+	<delete id="deleteBlogComment">
+		delete from blog_comment where id=#{id}
+	</delete>
+	
+	<update id="addBlogCommentLike">
+		update blog_comment set like_count=like_count+1 where id=#{id}
+	</update>
+	
+	<update id="addBlogCommentDisLike">
+		update blog_comment set dislike_count=dislike_count+1 where id=#{id}
+	</update>
+	
+	<select id="getBlogCommentCount" resultType="java.util.HashMap">
+		select count(distinct(user_id)) as commentuser_count, count(*) as comment_count from blog_comment	
+	</select>
+	
+</mapper>

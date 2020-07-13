@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.AuthCodeDao">
+
+	<resultMap type="com.master.application.bean.AuthCode"
+		id="AuthCodeMap">
+
+		<id column="id" property="id" />
+		<result column="email" property="email" />
+		<result column="auth_code" property="authCode" />
+		<result column="add_time" property="addTime" />
+		
+	</resultMap>
+	
+	<insert id="saveAuthCode" parameterType="com.master.application.bean.AuthCode">
+		insert into auth_code(email,auth_code,add_time)values(#{email},#{authCode},#{addTime})
+	</insert>
+	
+	<select id="getAuthCodeByEmail" resultMap="AuthCodeMap">
+		select * from auth_code where email=#{email}
+	</select>
+	
+	<delete id="deleteAuthCodeByEmail">
+		delete from auth_code where email=#{email}
+	</delete>
+	
+</mapper>

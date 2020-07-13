@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.AriticleTagDao">
+
+	<resultMap type="com.master.application.bean.AriticleTag"
+		id="AriticleTagMap">
+
+		<id column="id" property="id" />
+		<result column="ariticle_id" property="ariticleId" />
+		<result column="tag_id" property="tagId" />
+	</resultMap>
+	
+	<delete id="deleteTagByAriticle">
+		delete from ariticle_tag where ariticle_id=#{ariticleId}
+	</delete>
+	
+	<insert id="addAriticleTag">
+		<if test='tagIds!=null and tagIds.size()>0'>
+			insert into ariticle_tag(ariticle_id,tag_id)values
+			<foreach collection="tagIds" item="tagId" index="index" separator="," close=";">
+				(#{ariticleId},#{tagId})
+			</foreach>
+		</if>
+	</insert>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.AriticleDao">
+
+	<resultMap type="com.master.application.bean.Ariticle"
+		id="AriticleMap">
+
+		<id column="id" property="id" />
+		<result column="type_id" property="typeId" />
+		<result column="title" property="title" />
+		<result column="image" property="image" />
+		<result column="content" property="content" />
+		<result column="user_id" property="userId" />
+		<result column="type_name" property="typeName" />
+		<result column="user_name" property="userName" />
+		<result column="visit_count" property="visitCount" />
+		<result column="zan_count" property="zanCount" />
+		<result column="add_time" property="addTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="year" property="year" />
+	</resultMap>
+	
+	<insert id="addAriticle" parameterType="com.master.application.bean.Ariticle" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+		insert into ariticle(id,type_id,title,image,description,content,user_id,visit_count,zan_count,add_time,update_time)
+		values(#{id},#{typeId},#{title},#{image},#{description},#{content},#{userId},0,0,now(),now())
+	</insert>
+	
+	<select id="getAriticleById" resultMap="AriticleMap">
+		select a.*,b.type_name from(select ariticle.*,blog_user.user_name from ariticle left join blog_user on ariticle.user_id = blog_user.id 
+		where 1=1 and ariticle.id=#{id})as a left join ariticle_type b on a.type_id =b.id
+	</select>
+	
+	<select id="getNextAriticleById" resultMap="AriticleMap"> 
+		select * from ariticle where id <![CDATA[>]]> #{id} order by id asc limit 1
+	</select>
+	
+	<select id="getLastAriticleById" resultMap="AriticleMap">
+		select * from ariticle where id <![CDATA[<]]> #{id} order by id desc limit 1
+	</select>
+	
+	<insert id="updateAriticle" parameterType="com.master.application.bean.Ariticle">
+		update ariticle set type_id=#{typeId},title=#{title},content=#{content},user_id=#{user_id},update_time=now() where id=#{id}	
+	</insert>
+	
+	<select id="getAriticleList" resultMap="AriticleMap">
+		select a.*,b.type_name from (select ariticle.*,blog_user.user_name from ariticle left join blog_user on ariticle.user_id=blog_user.id
+		where 1=1
+		<if test='typeIds!=null and typeIds.size()>0'>
+			and type_id in
+			<foreach collection="typeIds" item="typeId" index="index" open="(" close=")" separator=",">
+	 			 #{typeId}
+			</foreach>
+		</if>
+		) as a left join ariticle_type b
+		on a.type_id=b.id order by id desc
+	</select>
+	
+	<select id="getAriticleListByTagAndType" resultMap="AriticleMap">
+		select c.*,d.type_name from (select b.* from(select ariticle_id from ariticle_tag left join tag 
+		on ariticle_tag.tag_id =tag.id where 1=1 
+		
+		<if test='tagIds!=null and tagIds.size()>0'>
+			and tag.id in
+			<foreach collection="tagIds" item="tagId" index="index" open="(" close=")" separator=",">
+	 			 #{tagId}
+			</foreach>
+		</if>) as a,ariticle b where a.ariticle_id=b.id 
+		<if test='typeIds!=null and typeIds.size()>0'>
+			and b.type_id in
+			<foreach collection="typeIds" item="typeId" index="index" open="(" close=")" separator=",">
+	 			 #{typeId}
+			</foreach>
+		</if>) as c left join ariticle_type d on c.type_id =d.id order by c.id desc
+	</select>
+	
+	
+	
+	<select id="getAriticleListByType" resultMap="AriticleMap">
+		select a.*,b.type_name from (select ariticle.*,blog_user.user_name from ariticle left join blog_user on ariticle.user_id=blog_user.id and ariticle.type_id=#{type_id}) as a left join ariticle_type b
+		on a.type_id=b.id order by update_time desc
+	</select>
+	
+	<delete id="deleteAriticle">
+		delete from ariticle where id=#{id}
+	</delete>
+	
+	<update id="addZanCount">
+		update ariticle set zan_count=zan_count+1 where id=#{id}
+	</update>
+	
+	<update id="addVisitCount">
+		update ariticle set visit_count=visit_count+1 where id=#{id}
+	</update>
+	
+	
+	<select id="getAllAriticleSimpleInfo" resultMap="AriticleMap">
+		select date_format(add_time,'%Y') as year,ariticle.id,ariticle.title,date_format(add_time,'%c-%e') as description from ariticle order by id desc
+	</select>
+	
+	<select id="getTop2AriticleCount" resultType="java.util.HashMap">
+		select ariticle_type.id,ariticle_type.type_name,count(ariticle_type.id) as count from ariticle left join ariticle_type on ariticle.type_id = ariticle_type.id 
+		group by ariticle_type.id,ariticle_type.type_name order by count desc limit 2 	
+	</select>
+
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.AriticleCommentDao">
+
+	<resultMap type="com.master.application.bean.AriticleComment"
+		id="AriticleCommentMap">
+
+		<id column="id" property="id" />
+		<result column="user_id" property="userId" />
+		<result column="ariticle_id" property="ariticleId" />
+		<result column="comment" property="comment" />
+		<result column="like_count" property="likeCount" />
+		<result column="dislike_count" property="dislikeCount" />
+		<result column="add_time" property="addTime" />
+		<result column="user_name" property="userName"/>
+		<result column="address" property="address"/>
+		
+	</resultMap>
+
+	<insert id="addAriticleComment" parameterType="com.master.application.bean.AriticleComment">
+		insert into ariticle_comment(user_id,ariticle_id,comment,like_count,dislike_count,add_time)values(#{userId},#{ariticleId},#{comment},0,0,now())
+	</insert>
+	
+	<update id="updateAriticleComment" parameterType="com.master.application.bean.AriticleComment">
+		update ariticle_comment set user_id=#{userId},#{ariticle_id}=#{ariticleId} where id=#{id}
+	</update>
+	
+	<delete id="deleteAriticleComment">
+		delete from ariticle_comment where id=#{id}
+	</delete>
+	
+	<update id="addLike">
+		update ariticle_comment set like_count=like_count+1 where id=#{id}
+	</update>
+	
+	<update id="addDisLike">
+		update ariticle_comment set dislike_count=dislike_count+1 where id=#{id}
+	</update>
+	
+	<select id="getAriticleCommentList" resultMap="AriticleCommentMap">
+		select ariticle_comment.*,blog_user.user_name,blog_user.address,blog_user.image from ariticle_comment left join
+		blog_user on ariticle_comment.user_id=blog_user.id where ariticle_comment.ariticle_id=#{ariticleId} order by ariticle_comment.id desc
+	</select>
+	
+	<select id="getAriticleCommentCount" resultType="java.lang.Integer">
+		select count(*) as count from ariticle_comment where ariticle_id= #{id}
+	</select>
+	
+	<select id="getAriticleCommentUserCount" resultType="java.lang.Integer">
+		select count(DISTINCT(user_Id)) as count  from ariticle_comment where ariticle_id=#{id}
+	</select>
+
+</mapper>

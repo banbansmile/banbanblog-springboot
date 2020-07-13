@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.TagDao">
+
+	<resultMap type="com.master.application.bean.Tag"
+		id="TagMap">
+
+		<id column="id" property="id" />
+		<result column="ariticle_count" property="ariticleCount" />
+		<result column="tag_name" property="tagName" />
+		<result column="visit_count" property="visitCount" />
+		<result column="image" property="image" />
+	</resultMap>
+	
+	<insert id="addTag" parameterType="com.master.application.bean.Tag">
+		insert into tag(tag_name,image)values(#{tagName},#{image})
+	</insert>
+	
+	<select id="getTagList" resultMap="TagMap">
+		select * from tag order by id
+	</select>
+	
+	<delete id="deleteTag">
+		delete from tag where id=#{id}
+	</delete>
+	
+	<select id="getTagAriticleCountList" resultMap="TagMap">
+		select tag.id,tag_name,count(*) as ariticle_count from tag,ariticle_tag where tag.id= ariticle_tag.tag_id group by tag.id,tag.tag_name	
+	</select>
+	
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.master.application.dao.AriticleTypeDao">
+
+	<resultMap type="com.master.application.bean.AriticleType"
+		id="AriticleTypeMap">
+
+		<id column="id" property="id" />
+		<result column="type_name" property="typeName" />
+		
+	</resultMap>
+
+	<insert id="addAriticleType" parameterType="com.master.application.bean.AriticleType">
+		insert into ariticle_type(type_name)values(#{typeName})
+	</insert>
+	
+	<select id="getAriticleTypeList" resultMap="AriticleTypeMap">
+		select * from ariticle_type order by id
+	</select>
+	
+	<delete id="deleteAriticleType">
+		delete from ariticle_type where id=#{id}
+	</delete>
+	
+</mapper>
